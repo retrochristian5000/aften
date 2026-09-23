@@ -138,7 +138,11 @@ main(int argc, char **argv)
     // seek to start of time range
     pcmfile_seek_time_ms(&pf, start_sec*1000, PCM_SEEK_SET);
 
-    buf = calloc(frame_size * pf.channels, sizeof(FLOAT));
+    if (pf.channels != 0 && frame_size > (int)(SIZE_MAX / (size_t)pf.channels)) {
+        fprintf(stderr, "requested buffer size is too large\n");
+        exit(1);
+    }
+    buf = calloc((size_t)frame_size * (size_t)pf.channels, sizeof(FLOAT));
 
     avg_rms = 31;
     avg_cnt = 1;
