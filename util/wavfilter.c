@@ -30,7 +30,7 @@
 static void
 wav_filter(FLOAT *samples, int ch, int n, FilterContext *f)
 {
-    FLOAT *samples2_buffer = malloc(ch * n * sizeof(FLOAT));
+    FLOAT *samples2_buffer = malloc((size_t)ch * (size_t)n * sizeof(FLOAT));
     FLOAT **samples2 = malloc(ch * sizeof(FLOAT*));
     FLOAT *tmp = malloc(n * sizeof(FLOAT));
     int j, i, c;
