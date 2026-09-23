@@ -275,12 +275,21 @@ main(int argc, char **argv)
         nr = pcm_read_samples(&pf, fwav, 256);
         diff = 256 - nr;
         if (diff > 0) {
+            /*
+             * pcm_read_samples() returns frames while fwav is interleaved by
+             * channel.  Move every channel of every frame, not just nr scalar
+             * elements.  The previous automated overflow fix widened the
+             * multiplication but still copied only one channel's data.
+             */
             size_t sample_offset = (size_t)diff * (size_t)s.channels;
-            memmove(fwav + sample_offset, fwav, (size_t)nr * sizeof(FLOAT));
-            memset(fwav, 0, sample_offset * sizeof(FLOAT));
+            size_t sample_count = (size_t)nr * (size_t)s.channels;
+            memmove(fwav + sample_offset, fwav,
+                    sample_count * sizeof(*fwav));
+            memset(fwav, 0, sample_offset * sizeof(*fwav));
         }
         if (aften_remap)
-            aften_remap(fwav + diff, nr, s.channels, s.sample_format, s.acmod);
+            aften_remap(fwav + ((size_t)diff * (size_t)s.channels), nr,
+                        s.channels, s.sample_format, s.acmod);
 
         s.initial_samples = fwav;
     }

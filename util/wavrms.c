@@ -138,7 +138,8 @@ main(int argc, char **argv)
     // seek to start of time range
     pcmfile_seek_time_ms(&pf, start_sec*1000, PCM_SEEK_SET);
 
-    if (pf.channels != 0 && frame_size > (int)(SIZE_MAX / (size_t)pf.channels)) {
+    if (pf.channels <= 0 || frame_size <= 0 ||
+        (size_t)frame_size > SIZE_MAX / (size_t)pf.channels) {
         fprintf(stderr, "requested buffer size is too large\n");
         exit(1);
     }

@@ -59,6 +59,25 @@ BINDINGS_CS: Builds C# bindings for aften. Include a reference to
         AftenSharp.dll in your C# project. You will find aften related
         classes in the namespace Aften.
 
+Apple Silicon and AArch64
+==========================
+
+AArch64 uses Aften's portable scalar C implementation.  The current tree has
+optimized SIMD implementations for x86 and PowerPC/AltiVec, but no NEON
+implementation yet.
+
+On macOS, select one ABI explicitly per build tree when the host ABI is not the
+desired target ABI.  For example:
+
+     cmake .. -DCMAKE_OSX_ARCHITECTURES=arm64
+     cmake .. -DCMAKE_OSX_ARCHITECTURES=arm64e
+
+The build records arm64, arm64e, and aarch64 as the same AArch64 instruction
+family while retaining arm64e as a distinct ABI marker in config.h.  Universal
+multi-architecture Apple builds are rejected because Aften's architecture-
+specific source selection is not currently universal-build safe.
+
+
 Some tips:
 
    - You can use a console GUI named ccmake for configuring cmake. This
