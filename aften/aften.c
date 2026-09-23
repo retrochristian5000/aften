@@ -275,8 +275,9 @@ main(int argc, char **argv)
         nr = pcm_read_samples(&pf, fwav, 256);
         diff = 256 - nr;
         if (diff > 0) {
-            memmove(fwav + diff * s.channels, fwav, nr);
-            memset(fwav, 0, diff * s.channels * sizeof(FLOAT));
+            size_t sample_offset = (size_t)diff * (size_t)s.channels;
+            memmove(fwav + sample_offset, fwav, (size_t)nr * sizeof(FLOAT));
+            memset(fwav, 0, sample_offset * sizeof(FLOAT));
         }
         if (aften_remap)
             aften_remap(fwav + diff, nr, s.channels, s.sample_format, s.acmod);
